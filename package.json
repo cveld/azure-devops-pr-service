@@ -1,0 +1,29 @@
+{
+  "name": "azure-devops-pr-service",
+  "version": "1.0.0",
+  "description": "Azure DevOps PR Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts",
+    "debug": "node --inspect -r ts-node/register index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cveld/azure-devops-pr-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cveld/azure-devops-pr-service/issues"
+  },
+  "homepage": "https://github.com/cveld/azure-devops-pr-service#readme",
+  "dependencies": {
+    "@types/express": "^4.17.6",
+    "azure-devops-node-api": "^10.1.1",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "ts-node": "^8.8.2",
+    "typescript": "^3.8.3"
+  }
+}
