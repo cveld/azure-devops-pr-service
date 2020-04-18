@@ -1,6 +1,7 @@
 import express from 'express'
 import * as vsts from 'azure-devops-node-api'
 import bodyParser from 'body-parser'
+import { GitStatusState } from 'azure-devops-node-api/interfaces/GitInterfaces'
 
 const app = express()
 app.use(bodyParser.json())
@@ -28,7 +29,7 @@ app.post('/', function (req, res) {
 
     let prStatus = {
         
-            "state": "succeeded",
+            "state": GitStatusState.Succeeded, // the js example uses the string "succeeded". In ts the value is a number from the enum: 2
             "description": "Ready for review",
             "targetUrl": "https://visualstudio.microsoft.com",
             "context": {
@@ -38,17 +39,16 @@ app.post('/', function (req, res) {
         
     }
     if (title.includes("WIP")) {
-        prStatus.state = "pending"
+        prStatus.state = GitStatusState.Pending // the js example uses the string "pending". In ts the value is a number from the enum: 1
         prStatus.description = "Work in progress"
     }
     
     connection.getGitApi().then( 
         vstsGit => { 
-            // Issues with Microsoft documentation:
-            // 1. Had to move the vstsGit promise into here;
-            //    the Microsoft documentation apparently gets this object synchronously
-            // 2. Typing information does not seem to be correct; had to cast prStatus to <any>.
-            vstsGit.createPullRequestStatus(<any>prStatus, repoId, pullRequestId).then( result => {
+            // Issue with Microsoft documentation:
+            // Had to move the vstsGit promise into here;
+            // the Microsoft documentation apparently gets this object synchronously            
+            vstsGit.createPullRequestStatus(prStatus, repoId, pullRequestId).then( result => {
                 console.log(result);
             },
             error => {
