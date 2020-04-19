@@ -32,9 +32,16 @@ steps:
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Pipeline.Workspace)'
+    targetPath: '$(Build.Repository.LocalPath)/function'
     artifact: 'Code'
     publishLocation: 'pipeline'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    artifact: 'Package'
+    publishLocation: 'pipeline'
+
 
 - task: AzureFunctionApp@1
   inputs:
