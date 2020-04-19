@@ -1,29 +1,21 @@
-import express from 'express'
+import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import * as vsts from 'azure-devops-node-api'
-import bodyParser from 'body-parser'
 import { GitStatusState } from 'azure-devops-node-api/interfaces/GitInterfaces'
 
-const app = express()
-app.use(bodyParser.json())
-app.get('/', function (req, res) {
-res.send('Hello World!')
-});
+const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+    context.log('HTTP trigger function processed a request.');
 
-app.listen(3000, function () {
-    console.log('Example app listening on port 3000!')
-});
+    // setx COLLECTIONURL "https://dev.azure.com/<your account>"
+    // $env:COLLECTIONURL = "https://dev.azure.com/<your account>"
+    const collectionURL = process.env["COLLECTIONURL"];
+    context.log("COLLECTIONURL: " + process.env["COLLECTIONURL"]);
+    // Get an AzDO PAT    
+    const token = process.env["TOKEN"];
 
-// setx COLLECTIONURL "https://dev.azure.com/<your account>"
-// $env:COLLECTIONURL = "https://dev.azure.com/<your account>"
-const collectionURL = process.env.COLLECTIONURL 
-// Get an AzDO PAT    
-const token = process.env.TOKEN
+    let authHandler = vsts.getPersonalAccessTokenHandler(token)
+    let connection = new vsts.WebApi(collectionURL, authHandler)
 
-let authHandler = vsts.getPersonalAccessTokenHandler(token)
-let connection = new vsts.WebApi(collectionURL, authHandler)
-
-app.post('/', function (req, res) {
-    let  repoId = req.body.resource.repository.id
+    let repoId = req.body.resource.repository.id
     let pullRequestId = req.body.resource.pullRequestId
     let title = req.body.resource.title
 
@@ -60,7 +52,13 @@ app.post('/', function (req, res) {
         } 
     );
     
-    res.send('Received the POST');
-});
+    context.res = { 
+        // status: 200, /* Defaults to 200 */
+        body: 'Received the POST'
+    };
 
 
+    //const name = (req.query.name || (req.body && req.body.name));
+};
+
+export default httpTrigger;
