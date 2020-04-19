@@ -16,6 +16,8 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    echo Build.BinariesDirectory = $(Build.BinariesDirectory)
+    cd function
     npm install
     npm run build
   displayName: 'npm install and build'
@@ -23,9 +25,9 @@ steps:
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.BinariesDirectory)'
-    includeRootFolder: true
+    includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: 
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
 
 - task: PublishPipelineArtifact@1
@@ -39,5 +41,5 @@ steps:
     azureSubscription: 'SlotsExperiment'
     appType: 'functionAppLinux'
     appName: 'slotsexperiment-functionapp-nodejs'
-    package: '''$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'''
+    package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     runtimeStack: 'DOCKER|microsoft/azure-functions-node8:2.0'
