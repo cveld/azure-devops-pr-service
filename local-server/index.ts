@@ -23,7 +23,7 @@ let authHandler = vsts.getPersonalAccessTokenHandler(token)
 let connection = new vsts.WebApi(collectionURL, authHandler)
 
 app.post('/', function (req, res) {
-    let  repoId = req.body.resource.repository.id
+    let repoId = req.body.resource.repository.id
     let pullRequestId = req.body.resource.pullRequestId
     let title = req.body.resource.title
 
